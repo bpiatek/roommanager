@@ -1,20 +1,30 @@
 package order
 
 import (
+	"encoding/json"
 	"fmt"
+	"github.com/bpiatek/roommanager/src/orderdetails"
 	"github.com/gorilla/mux"
+	"io/ioutil"
+	"log"
 	"net/http"
 	"strconv"
 )
 
 func AddOrder(response http.ResponseWriter, request *http.Request) {
-	//body, err := ioutil.ReadAll(request.Body)
-	//if err != nil {
-	//	panic(err)
-	//}
-	//var orderv Order
-	//json.Unmarshal(body, &orderv)
+	body, err := ioutil.ReadAll(request.Body)
+	if err != nil {
+		panic(err)
+	}
+	var orderDetails orderdetails.OrderDetailsDTO
+	json.Unmarshal(body, &orderDetails)
 
+	log.Println("ROOM ID: ", orderDetails.RoomId)
+
+	if orderDetails.RoomId == 0 || orderDetails.Minutes == 0{
+		webError(response, request, "Missing parameters or wrong format.", http.StatusBadRequest)
+		return
+	}
 
 	vars := mux.Vars(request)
 	userID := vars["id"]
@@ -27,31 +37,14 @@ func AddOrder(response http.ResponseWriter, request *http.Request) {
 		webError(response, request, "Invalid form of id. It should be numeric", http.StatusBadRequest)
 		return
 	}
-	//
-	//jsonResponse := user.GetUserByIdDB(i)
-	//
-	//fmt.Println(string(jsonResponse))
-	//
-	//if jsonResponse == nil {
-	//	webError(response, request,"User with id: " + userID + " not found", http.StatusNotFound)
-	//	return
-	//}
 
-	//if orderv.CustomerId == 0 {
-	//	webError(response, request, "Missing parameters.", http.StatusBadRequest)
-	//	return
-	//}
-	_, erro := makeOrderDB(i)
+	_, erro := makeOrderDB(i, orderDetails)
 	if erro != nil {
-		//if strings.Contains(erro.Error(), ": Duplicate entry") {
-		//	log.Printf("Room already exists in database. Name: %s\n", i)
-		//	webError(response, request, "Room '" + roomv.Name + "' already exist.", http.StatusConflict)
-		//	return
-		//}
+		webError(response, request, "Error when adding order to DB", http.StatusInternalServerError)
 		fmt.Println(erro)
 		return
 	}
-	//
+
 	response.WriteHeader(http.StatusCreated)
 }
 

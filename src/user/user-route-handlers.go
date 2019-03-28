@@ -61,14 +61,14 @@ func AddCardToUser(response http.ResponseWriter, request *http.Request) {
 func GetUserById(response http.ResponseWriter, request *http.Request) {
 	userID := mux.Vars(request)["id"]
 
-	i, err := strconv.Atoi(userID)
+	id, err := strconv.Atoi(userID)
 	if err != nil {
 		fmt.Println(err)
 		webError(response, request, "Invalid form of id. It should be numeric", http.StatusBadRequest)
 		return
 	}
 
-	user, erro := GetUserByIdDB(i)
+	user, erro := GetUserByIdDB(id)
 	if erro != nil {
 		fmt.Println(erro)
 	}

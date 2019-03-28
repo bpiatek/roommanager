@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"github.com/bpiatek/roommanager/src/order"
-	"github.com/bpiatek/roommanager/src/orderdetails"
 	"github.com/bpiatek/roommanager/src/room"
 	"github.com/bpiatek/roommanager/src/user"
 	"github.com/gorilla/mux"
@@ -25,6 +24,8 @@ func AddApproutes(route *mux.Router) {
 	route.HandleFunc("/users/{id}", user.GetUserById).Methods("GET")
 	fmt.Println("POST /users => add user")
 	route.HandleFunc("/users", user.AddUser).Methods("POST")
+	fmt.Println("POST /users/{id}/card => add card to the user")
+	route.HandleFunc("/users/{id}/card", user.AddCardToUser).Methods("POST")
 
 	fmt.Println("\nROOM ENDPOINTS:")
 	fmt.Println("GET /rooms => get all rooms")
@@ -35,18 +36,8 @@ func AddApproutes(route *mux.Router) {
 	route.HandleFunc("/rooms", room.AddRoom).Methods("POST")
 
 	fmt.Println("\nORDERS ENDPOINTS:")
-	fmt.Println("POST /orders => add room")
-	//route.HandleFunc("/orders", order.AddOrder).Methods("POST")
+	fmt.Println("POST /users/{id}/orders => reserve room for given user")
 	route.HandleFunc("/users/{id}/orders", order.AddOrder).Methods("POST")
 	fmt.Println("GET users/{id}/orders => get orders by user id")
 	route.HandleFunc("/users/{id}/orders", order.GetOrdersByCustomerId).Methods("GET")
-	//route.HandleFunc("/orders/{id}", order.GetOrdersByCustomerId).Methods("GET")
-	//route.HandleFunc("/", renderHome)
-
-	route.HandleFunc("/users/{userId}/orders/{orderId}/details", orderdetails.AddOrderDetails).Methods("POST")
-
-
-	route.HandleFunc("/users/{id}/card", user.AddCardToUser).Methods("POST")
-
-
 }
