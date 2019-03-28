@@ -73,6 +73,39 @@ func GetOrdersByCustomerId(response http.ResponseWriter, request *http.Request) 
 	}
 }
 
+func GetOrderDetailsById(response http.ResponseWriter, request *http.Request) {
+	vars := mux.Vars(request)
+	orderId := vars["id"]
+
+	fmt.Println("ID: " + orderId)
+
+	i, err := strconv.Atoi(orderId)
+	if err != nil {
+		fmt.Println(err)
+		webError(response, request, "Invalid form of id. It should be numeric", http.StatusBadRequest)
+		return
+	}
+	log.Println(i)
+
+	orderDetails, erro := orderdetails.GetOrderDetailsByOrderId(i)
+	if erro != nil {
+		fmt.Println(erro)
+		webError(response, request,"There is no order with ID: " + orderId + ".", http.StatusNotFound)
+		return
+	}
+
+	jsonResponse, jsonError := json.Marshal(orderDetails)
+	if jsonError != nil {
+		fmt.Println(jsonError)
+		return
+	}
+
+	response.Header().Set("Content-Type", "application/json")
+	response.Write(jsonResponse)
+
+
+}
+
 
 func webError(response http.ResponseWriter, request *http.Request , err string, status int) {
 	response.Header().Set("Content-Type", "application/json")

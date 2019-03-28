@@ -40,4 +40,6 @@ func AddApproutes(route *mux.Router) {
 	route.HandleFunc("/users/{id}/orders", order.AddOrder).Methods("POST")
 	fmt.Println("GET users/{id}/orders => get orders by user id")
 	route.HandleFunc("/users/{id}/orders", order.GetOrdersByCustomerId).Methods("GET")
+	fmt.Println("GET orders/{id} => get order by order id")
+	route.HandleFunc("/orders/{id}", order.GetOrderDetailsById).Methods("GET")
 }
