@@ -5,14 +5,14 @@ import (
 	"log"
 )
 
-func addOrderDetailsDB(orderId int, roomId int, minutes int) (b bool, err error) {
+func AddOrderDetailsDB(orderId int, details OrderDetailsDTO) (b bool, err error) {
 	stmtIns, err := src.GetDB().Prepare("INSERT INTO orderdetails VALUES( ?, ?, ? )")
 	if err != nil {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}
 
 	defer stmtIns.Close()
-	_, err = stmtIns.Exec(orderId, roomId, minutes)
+	_, err = stmtIns.Exec(orderId, details.RoomId, details.Minutes)
 
 	if err != nil {
 		return false, err

@@ -4,22 +4,30 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/bpiatek/roommanager/src"
+	"github.com/bpiatek/roommanager/src/orderdetails"
 	"log"
 	"time"
 )
 
-func makeOrderDB(userId int)  (b bool, err error){
+func makeOrderDB(userId int, details orderdetails.OrderDetailsDTO)  (b bool, err error){
+
 	stmtIns, err := src.GetDB().Prepare("INSERT INTO orders VALUES( ?, ?, ? )")
 	if err != nil {
-	panic(err.Error()) // proper error handling instead of panic in your app
+		panic(err.Error()) // proper error handling instead of panic in your app
 	}
 
 	defer stmtIns.Close()
 
-	_, err = stmtIns.Exec(0, time.Now(), userId)
+	now := time.Now()
+	res, err := stmtIns.Exec(0, now, userId)
 	if err != nil {
 		return false, err
 	}
+
+	id, _ := res.LastInsertId()
+
+	orderdetails.AddOrderDetailsDB(int(id), details)
+
 	log.Printf("Added order to database.")
 
 	return  true, err

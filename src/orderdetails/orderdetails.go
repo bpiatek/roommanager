@@ -11,5 +11,5 @@ type OrderDetails struct {
 
 type OrderDetailsDTO struct {
 	RoomId int				`json:"room_id"`
-	Minutes sql.NullInt64	`json:"minutes"`
+	Minutes int				`json:"minutes"`
 }
